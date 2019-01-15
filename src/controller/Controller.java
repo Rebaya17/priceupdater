@@ -397,8 +397,8 @@ public class Controller extends WindowAdapter implements ChangeListener, ActionL
         String des = "articulo.art_des LIKE '%" + mainWindow.getDes() + "%'";
         
         /* Build query */
-        String query = "SELECT"
-                + " RTRIM(articulo.co_art),"
+        String query = "SELECT DISTINCT"
+                + " RTRIM(articulo.co_art) AS cod,"
                 + " RTRIM(articulo.art_des),"
                 + " precio.monto"
                 + " FROM dbo.saArticulo articulo"
@@ -414,7 +414,7 @@ public class Controller extends WindowAdapter implements ChangeListener, ActionL
         else if (!cod.isEmpty() && !des.isEmpty())
             query += " WHERE " + cod + " AND " + des;
         
-        query += " ORDER BY articulo.co_art";
+        query += " ORDER BY cod";
         
         /* Consult to database and set articles*/
         try {
@@ -476,12 +476,12 @@ public class Controller extends WindowAdapter implements ChangeListener, ActionL
             for (int i = 0; i < modified.length; i++) {
                 int row = modified[i];
                 
-                String query = "UPDATE dbo.saArtPrecio"
+                String statement = "UPDATE dbo.saArtPrecio"
                         + " SET monto = " + articles.getValueAt(row, 2).toString() + ","
                         + " desde = GETDATE()"
-                        + " WHERE co_art = '" + articles.getValueAt(row, 0).toString().trim() + "'";
+                        + " WHERE co_art = '" + articles.getValueAt(row, 0).toString() + "'";
                 
-                dbManager.executeStatement(query);
+                dbManager.executeStatement(statement);
             }
             
         /* Error */
