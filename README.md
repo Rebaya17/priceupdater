@@ -1,4 +1,4 @@
-#Price Updater
+# Price Updater
 
 Easily update prices and costs in a MiProfit Microsoft SQL Server database
 
