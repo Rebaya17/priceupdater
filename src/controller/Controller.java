@@ -414,7 +414,7 @@ public class Controller extends WindowAdapter implements ChangeListener, ActionL
         else if (!cod.isEmpty() && !des.isEmpty())
             query += " WHERE " + cod + " AND " + des;
         
-        query += " ORDER BY co_art";
+        query += " ORDER BY articulo.co_art";
         
         /* Consult to database and set articles*/
         try {
