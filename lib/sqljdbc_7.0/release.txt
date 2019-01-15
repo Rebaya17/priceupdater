@@ -1,0 +1,214 @@
+Información de la versión
+Microsoft JDBC Driver 7.0 para SQL Server
+Julio de 2018
+
+------------
+INTRODUCCIÓN
+------------
+Este archivo contiene información importante o de última hora que complementa a Microsoft JDBC. 
+Documentación de Driver 7.0 para SQL Server. Debe leer este archivo en su totalidad antes de instalar 
+el controlador JDBC.
+
+Sus comentarios son muy importantes y haremos lo posible para responderle puntualmente 
+. Para más información sobre cómo proporcionar comentarios mediante los blogs y los foros en línea del controlador JDBC, 
+consulte la página de Microsoft JDBC Driver 7.0 para SQL Server en https://aka.ms/mssql-jdbc.
+
+
+------------
+INSTALACIÓN
+------------
+Las instrucciones para instalar el controlador JDBC se encuentran en install.txt. Consulte este archivo para 
+obtener información sobre cómo instalar el controlador JDBC en los sistemas operativos Windows. Linux y Mac.
+
+
+---------------------------
+SISTEMAS OPERATIVOS ADMITIDOS
+---------------------------
+Sistemas operativos compatibles con Microsoft JDBC Driver 7.0 para SQL Server:
+  Windows Server 2008 SP2
+  Windows Server 2008 R2 SP1
+  Windows Server 2012
+  Windows Server 2012 R2
+  Windows Server 2016
+  Windows 8
+  Windows 8.1
+  Windows 10
+  Linux
+  Mac
+
+Esta lista es un ejemplo de algunos de los sistemas operativos admitidos. El controlador JDBC está diseñado 
+para funcionar en cualquier sistema operativo que admita el uso de una máquina virtual Java (JVM). 
+
+Sin embargo, solo en los sistemas operativos Linux y Mac OS más recientes (Ubuntu 18.04, CentOs 7, Suse 12, 
+Mac OS 10.13) se ha comprobado la compatibilidad y el soporte técnico.
+
+
+----------------
+CONTENIDO DE LA VERSIÓN
+----------------
+El archivo .zip o .tar ejecutable de Microsoft JDBC Driver 7.0 para SQL Server desempaqueta los siguientes archivos 
+en las ubicaciones especificadas, relativas al directorio de instalación:
+
+<directorio de instalación>\sqljdbc_<versión>\<idioma>\install.txt
+<directorio de instalación>\sqljdbc_<versión>\<idioma>\release.txt
+<directorio de instalación>\sqljdbc_<versión>\<idioma>\license.txt
+<directorio de instalación>\sqljdbc_<versión>\<idioma>\thirdpartynotices.txt
+<directorio de instalación>\sqljdbc_<versión>\<idioma>\mssql-jdbc-7.0.0.jre8.jar
+<directorio de instalación>\sqljdbc_<versión>\<idioma>\mssql-jdbc-7.0.0.jre10.jar
+<directorio de instalación>\sqljdbc_<versión>\<idioma>\auth\x86\sqljdbc_auth.dll
+<directorio de instalación>\sqljdbc_<versión>\<idioma>\auth\x64\sqljdbc_auth.dll
+<directorio de instalación>\sqljdbc_<versión>\<idioma>\samples\<archivos de ejemplo...>
+<directorio de instalación>\sqljdbc_<versión>\<idioma>\xa\xa_install.sql
+<directorio de instalación>\sqljdbc_<versión>\<idioma>\xa\x86\sqljdbc_xa.dll
+<directorio de instalación>\sqljdbc_<versión>\<idioma>\xa\x64\sqljdbc_xa.dll
+
+Para obtener información detallada sobre cada componente, consulte la documentación en línea,
+Documentación de Microsoft JDBC Driver para SQL Server: 
+https://msdn.microsoft.com/en-us/library/dn197850(v=sql.10).aspx
+
+
+-------------
+DOCUMENTACIÓN
+-------------
+En este paquete se incluye esta información de versión, las instrucciones de instalación y los términos de licencia. 
+El resto de la documentación se puede encontrar en línea.
+
+Tenga en cuenta que los archivos de ayuda sin conexión se han suspendido. 
+
+
+---------
+ARCHIVOS .JAR
+---------
+Para permitir la compatibilidad con versiones anteriores y posibles casos de actualización, JDBC Driver 7.0 incluye 
+dos bibliotecas de clases JAR en cada paquete de instalación:
+	mssql-jdbc-7.0.0.jre8.jar
+	mssql-jdbc-7.0.0.jre10.jar.
+
+
+----------------------
+ARCHIVOS DE CARACTERÍSTICAS ESPECÍFICAS
+----------------------
+Se incluyen componentes de Azure Active Directory y autenticación integrada (en Windows) 
+en el directorio "auth".
+
+Se incluyen componentes de transacciones distribuidas de JDBC en el directorio "xa".
+
+
+--------------------
+DEPENDENCIAS DE CARACTERÍSTICAS
+--------------------
+Algunas características de Microsoft JDBC Driver 7.0 para SQL Server son dependientes de bibliotecas externas, 
+como se muestra a continuación:
+
+1. Uso de "Always Encrypted" con Azure Key Vault Provider
+   Biblioteca dependiente: azure-keyvault (versión 1.0.0) y adal4j (versión 1.6.0)
+   
+2. Uso de "Autenticación integrada de Azure Active Directory" en sistemas operativos Windows, Linux y Mac
+   Biblioteca dependiente: adal4j (versión 1.6.0)
+
+En el vínculo siguiente encontrará información detallada sobre cómo incluir estas bibliotecas dependientes en una aplicación de Java estándar 
+o una aplicación de Maven: https://go.microsoft.com/fwlink/?linkid=867575
+
+
+-------
+EJEMPLOS
+-------
+Se incluyen aplicaciones de ejemplo que muestran diversas características del controlador JDBC en el 
+"samples". Para más información sobre cada ejemplo y cómo ejecutarlo, consulte la documentación 
+en línea.
+
+
+-----------
+LISTA DE CAMBIOS
+-----------
+Cambios entre las versiones 6.4.0.0 y 7.0.0.0:
+- Se ha agregado compatibilidad con JDK 10 al controlador para reemplazar JDK9.
+- Se han actualizado las dependencias de Maven para la Biblioteca de autenticación de Microsoft Azure Active Directory (ADAL4J) para Java 
+  a la versión 1.6.0 de la biblioteca.
+- Se ha actualizado el nivel de cumplimiento predeterminado del controlador a las especificaciones de JDBC 4.2.
+- Se ha agregado compatibilidad con tipos de datos espaciales.
+- Se ha agregado la nueva propiedad de conexión "cancelQueryTimeout" para cancelar QueryTimeout en Connection y 
+  Statement.
+- Se ha agregado la implementación de JDBC 4.3 y las API de java.sql.Connection beginRequest() y endRequest().
+-Se ha agregado compatibilidad con Azure Key Vault Provider para permitir la autenticación usando un método personalizado que se implementa 
+  mediante "SQLServerKeyVaultAuthenticationCallback" para capturar el token de acceso.
+-Se ha agregado compatibilidad con la captura de datos de detección e información de clasificación en ResultSet.
+-Se ha agregado compatibilidad con la extensión de la característica UTF-8.
+-Se ha modificado Sha1 a CityHash para generar el controlador PreparedStatement y las claves de caché de metadatos.
+- Se ha agregado la entrada de manifiesto "Automatic-Module-Name" a los archivos JAR jre10 resultantes, de modo que el módulo de controladores
+  "com.microsoft.sqlserver.jdbc" esté disponible para clientes con JDK 10.
+
+Mejoras: 
+- Se ha mejorado el rendimiento sin renunciar al cumplimiento de los resultados de sp_fkeys por parte de JDBC.
+- Se ha agregado la nueva propiedad de conexión "useBulkCopyForBatchInsert", que permite que el controlador use
+  la API de copia masiva al realizar una operación de inserción masiva. Esta característica solo está disponible al realizar una 
+  inserción masiva en Azure Data Warehouse y aumenta notablemente el rendimiento de la operación.
+
+Correcciones de errores:
+- Se ha corregido un error por el que los Blobs dejaban de estar disponibles al mover el cursor ResultSet o cerrar ResultSet.
+- Se ha corregido un error por el que no se podía insertar un valor vacío o nulo en una columna cifrada.
+- Se ha corregido un mensaje de error engañoso que el controlador enviaba a usuarios sin permisos de ejecución.
+- Se han corregido errores de afinidad de la CPU en el servidor cuando "multiSubnetFailover" era cierto. La causa era una distribución de la 
+  conexión irregular por los nodos NUMA.
+- Se ha corregido un error que provocaba que el controlador no analizase completamente los paquetes TDS para capturar excepciones 
+  originadas dentro de procedimientos almacenados ejecutados.
+- Se ha corregido un error que provocaba que el controlador produjese una excepción al usar API de instrucción y ejecutar consultas 
+  con SHOWPLAN_TEXT activado.
+-Se ha corregido un error que provocaba que las instancias de ResultSetMetaData creadas por un ResultSet no cerradas 
+  no ser conservasen.
+- Se ha corregido un problema con PreparedStatement.setBigDecimal() cuando no se pasaba ninguna escala.
+- Se ha corregido un error que provocaba que Clobs/NClobs no se conservasen tras cerrar ResultSet/Connection.
+- Se ha corregido la eliminación de credenciales creadas por el usuario por parte del controlador al usar la delegación restringida de Kerberos.
+- Se ha corregido un problema con "hostNameInCertificate" al realizarse una redirección con una conexión a Azure establecida.
+- Se han corregido problemas intermitentes con el error "No se ha encontrado el controlador de la instrucción preparada" al habilitar la agrupación de instrucciones.
+- Se han corregido las instrucciones que generaban SQLServerException en lugar de java.sql.SQLTimeoutException al 
+  agotar el tiempo de espera de la consulta.
+- Se ha corregido un conflicto con el cumplimiento de JDBC en el que el controlador devolvía columnas generadas como SS_IS_COMPUTED 
+  en lugar de IS_GENERATED.
+- Se ha corregido un problema con los nombres de catálogo con escape al recuperar los metadatos con getSchema().
+- Se ha limpiado la implementación del control de sockets para generalizar la funcionalidad de varias máquinas virtuales de Java. 
+  Además, se ha simplificado la lógica para el caso de una única dirección IP.
+
+  
+------------
+PROBLEMAS CONOCIDOS
+------------
+Estos son los problemas conocidos de Microsoft JDBC Driver 7.0 para SQL Server:
+
+1) LIMITACIONES DE METADATOS DE PARÁMETROS AL USAR SQL SERVER 2008 O 2008 R2
+
+1.a) PreparedStatement.getParameterMetadata() genera una excepción de tipo SQLException cuando se usa
+con una consulta MERGE parametrizada.
+
+1.b) Los metadatos de parámetros para instrucciones preparadas no funcionan con consultas con combinaciones y subconsultas.
+
+
+2) QUITAR CONEXIONES CON SQL AZURE
+
+Al conectarse a SQL Azure, un componente de red podría terminar las conexiones inactivas (como un 
+firewall) después de un período de inactividad. Para evitar la eliminación de las conexiones inactivas por un componente de red, 
+se debe establecer la siguiente configuración del Registro (o sus equivalentes que no son de Windows) en 
+el sistema operativo donde está cargado el controlador:
+           
+Configuración del Registro                                                                   Valor recomendado
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\KeepAliveTime            30000
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\KeepAliveInterval         1000
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\TcpMaxDataRetransmission  10
+
+
+3) USO DE TVP CON SQL_VARIANT 
+
+3.a) PARA VALORES DE FECHA
+
+Al usar TVP para rellenar una tabla que contiene los valores de datetime/smalldatetime/date almacenados en la columna sql_variant, 
+las llamadas a getDateTime()/getSmallDateTime()/getDate() en ResultSet no funcionan y producen la excepción siguiente:
+
+	java.lang.String no se puede convertir en java.sql.Timestamp
+
+Solución alternativa: use getString() o getObject() en su lugar.
+
+3.b) USO DE TVP CON SQL_VARIANT PARA VALORES NULL
+
+Si usa TVP para rellenar una tabla y envía un valor NULL al tipo de columna sql_variant, encontrará
+una excepción dado que actualmente no se admite la inserción del valor NULL con el tipo de columna sql_variant en TVP.
+
