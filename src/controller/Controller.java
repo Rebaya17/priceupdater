@@ -393,16 +393,17 @@ public class Controller extends WindowAdapter implements ChangeListener, ActionL
             }
         }
         
-        String cod = "co_art LIKE '%" + mainWindow.getCod() + "%'";
-        String des = "art_des LIKE '%" + mainWindow.getDes() + "%'";
+        String cod = "articulo.co_art LIKE '%" + mainWindow.getCod() + "%'";
+        String des = "articulo.art_des LIKE '%" + mainWindow.getDes() + "%'";
         
         /* Build query */
         String query = "SELECT"
-                + " RTRIM(co_art),"
-                + " RTRIM(art_des),"
-                + " ult_cos_un,"
-                + " prec_vta1"
-                + " FROM dbo.art";
+                + " RTRIM(articulo.co_art),"
+                + " RTRIM(articulo.art_des),"
+                + " precio.monto"
+                + " FROM dbo.saArticulo articulo"
+                + " INNER JOIN dbo.saArtPrecio precio"
+                + " ON articulo.co_art = precio.co_art";
         
         if (!cod.isEmpty() && des.isEmpty())
             query += " WHERE " + cod;
@@ -475,9 +476,9 @@ public class Controller extends WindowAdapter implements ChangeListener, ActionL
             for (int i = 0; i < modified.length; i++) {
                 int row = modified[i];
                 
-                String query = "UPDATE dbo.art"
-                        + " SET ult_cos_un = " + articles.getValueAt(row, 2).toString() + ","
-                        + " prec_vta1 = " + articles.getValueAt(row, 3).toString()
+                String query = "UPDATE dbo.saArtPrecio"
+                        + " SET monto = " + articles.getValueAt(row, 2).toString() + ","
+                        + " desde = GETDATE()"
                         + " WHERE co_art = '" + articles.getValueAt(row, 0).toString().trim() + "'";
                 
                 dbManager.executeStatement(query);

@@ -31,11 +31,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import static java.lang.Float.parseFloat;
+//import static java.lang.Float.parseFloat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+//import java.util.logging.Level;
+//import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -54,30 +54,31 @@ public class ArticlesTable extends DefaultTableModel {
         return columnStatus[column];
     }
 
-    @Override
-    public void setValueAt(Object newValue, int row, int column) {
-        /* Other columns */
-        if (column != 3) {
-            super.setValueAt(newValue, row, column);
-            return;
-        }
-        
-        /* Price column */
-        float newVal = parseFloat(newValue.toString());
-        float oldVal = parseFloat(getValueAt(row, column).toString());
-        
-        try {
-            if (newVal < 0) throw new NumberFormatException("Error: Negative number are not allowed");
-            
-            super.setValueAt(newVal, row, column);
-            super.setValueAt(newVal / (1 + ratio), row, column - 1);
-            
-            addModified(row);
-        } catch (NumberFormatException ex) {
-            super.setValueAt(oldVal, row, column);
-            Logger.getLogger(ArticlesTable.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+    //@Override
+    //public void setValueAt(Object newValue, int row, int column) {
+    //    /* Other columns */
+    //    //if (column != 3) {
+    //    if (column != 2) {
+    //        super.setValueAt(newValue, row, column);
+    //        return;
+    //    }
+    //    
+    //    /* Price column */
+    //    float newVal = parseFloat(newValue.toString());
+    //    float oldVal = parseFloat(getValueAt(row, column).toString());
+    //    
+    //    try {
+    //        if (newVal < 0) throw new NumberFormatException("Error: Negative number are not allowed");
+    //        
+    //        super.setValueAt(newVal, row, column);
+    //        super.setValueAt(newVal / (1 + ratio), row, column - 1);
+    //        
+    //        addModified(row);
+    //    } catch (NumberFormatException ex) {
+    //        super.setValueAt(oldVal, row, column);
+    //        Logger.getLogger(ArticlesTable.class.getName()).log(Level.SEVERE, null, ex);
+    //    }
+    //}
     
     /**
      * Creates new table
@@ -86,8 +87,11 @@ public class ArticlesTable extends DefaultTableModel {
         ratio = 0F;
         modified = new ArrayList<>();
         
-        columnStatus = new boolean[] {false, false, false, true};
-        super.setColumnIdentifiers(new String[]{"Código", "Descripción", "Costo", "Precio"});
+        //columnStatus = new boolean[] {false, false, false, true};
+        //super.setColumnIdentifiers(new String[]{"Código", "Descripción", "Costo", "Precio"});
+
+        columnStatus = new boolean[] {false, false, true};
+        super.setColumnIdentifiers(new String[]{"Código", "Descripción", "Precio"});
     }
     
     /**
@@ -110,9 +114,10 @@ public class ArticlesTable extends DefaultTableModel {
             String cod = row.getCell(0).getStringCellValue();
             String des = row.getCell(1).getStringCellValue();
             float vta = (float) row.getCell(2).getNumericCellValue();
-            float cos = vta / (1 + ratio);
+            //float cos = vta / (1 + ratio);
             
-            addRow(new String[]{cod, des, String.valueOf(cos), String.valueOf(vta)});
+            //addRow(new String[]{cod, des, String.valueOf(cos), String.valueOf(vta)});
+            addRow(new String[]{cod, des, String.valueOf(vta)});
             modified.add(j);
         }
     }

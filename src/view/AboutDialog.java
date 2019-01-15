@@ -101,7 +101,7 @@ public class AboutDialog extends JDialog {
         message.setEditable(false);
         message.setBackground(SystemColor.control);
         message.setFont(new Font("Tahoma", 0, 13)); // NOI18N
-        message.setText("Actualizador de precios.\nv1.3\n\nErick Rincones - 2018");
+        message.setText("Actualizador de precios.\nv1.4\n\nErick Rincones - 2019");
         message.setName("message"); // NOI18N
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
