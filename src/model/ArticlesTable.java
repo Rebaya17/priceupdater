@@ -107,7 +107,7 @@ public class ArticlesTable extends DefaultTableModel {
             
             if (row == null || row.getCell(0) == null) return;
             
-            String cod = row.getCell(0).getStringCellValue();
+            String cod = String.format("%-14s", row.getCell(0).getStringCellValue()).replace(' ', '0');
             String des = row.getCell(1).getStringCellValue();
             float vta = (float) row.getCell(2).getNumericCellValue();
             float cos = vta / (1 + ratio);
