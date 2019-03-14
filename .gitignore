@@ -1,3 +1,8 @@
-/lib/sqljdbc_7.0/samples/
-/lib/poi-3.17/docs/
+# Ignore these folders
+/dist/
 /build/
+/test/
+/resources/
+/nbproject/private
+/lib/poi-3.17/docs/
+/lib/sqljdbc_7.0/samples/
