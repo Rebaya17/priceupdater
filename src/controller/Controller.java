@@ -475,11 +475,13 @@ public class Controller extends WindowAdapter implements ChangeListener, ActionL
         try {
             for (int i = 0; i < modified.length; i++) {
                 int row = modified[i];
+                String co_art = articles.getValueAt(row, 0).toString();
                 
                 String statement = "UPDATE dbo.saArtPrecio"
                         + " SET monto = " + articles.getValueAt(row, 2).toString() + ","
                         + " desde = GETDATE()"
-                        + " WHERE co_art = '" + articles.getValueAt(row, 0).toString() + "'";
+                        + " WHERE co_art = '" + co_art + "'"
+                        + " AND desde = (SELECT MAX(desde) FROM dbo.saArtPrecio WHERE co_art = '" + co_art + "')";
                 
                 dbManager.executeStatement(statement);
             }
@@ -492,6 +494,9 @@ public class Controller extends WindowAdapter implements ChangeListener, ActionL
         
         /* Clear modified rows */
         articles.clearModified();
+        
+        /* Show message dialog */
+        JOptionPane.showMessageDialog(mainWindow, "Base de datos actualizada", "Finalizado", JOptionPane.INFORMATION_MESSAGE);
     }
     
     /**
