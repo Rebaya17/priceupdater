@@ -491,6 +491,9 @@ public class Controller extends WindowAdapter implements ChangeListener, ActionL
         
         /* Clear modified rows */
         articles.clearModified();
+        
+        /* Show message dialog */
+        JOptionPane.showMessageDialog(mainWindow, "Base de datos actualizada", "Finalizado", JOptionPane.INFORMATION_MESSAGE);
     }
     
     /**
