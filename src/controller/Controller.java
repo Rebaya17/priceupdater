@@ -448,11 +448,12 @@ public class Controller extends WindowAdapter implements ChangeListener, ActionL
                     articles.read(chooser.getSelectedFile().getAbsolutePath());
             
                     mainWindow.setTable(articles);
-                    return;
                 } catch (IOException ex) {
                     Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
                     JOptionPane.showMessageDialog(mainWindow, ex.getMessage(), "Error importando hoja de cálculo", JOptionPane.ERROR_MESSAGE);
                 }
+                
+                return;
             
             /* Import cancelled */
             case FileChooser.CANCEL_OPTION:
