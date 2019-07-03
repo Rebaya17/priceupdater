@@ -36,13 +36,11 @@ import static java.lang.Float.parseFloat;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javax.swing.JOptionPane;
-import javax.swing.JSpinner;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import model.DBManager;
 import model.ArticlesTable;
 import static model.Kryptos.decode;
@@ -57,7 +55,7 @@ import view.SettingsDialog;
 /**
  * Controller class 
  */
-public class Controller extends WindowAdapter implements ChangeListener, ActionListener {
+public class Controller extends WindowAdapter implements ActionListener {
     private static final String KEY = "eIR2doSBcXJ3dnSCdoR1dIaBd3WBdHl3hoN2g3NyhXN5cHdxcnJ4goJzcHiGhXF2dHVwhXJxgoVwdnhwcXJ0cw===64";
     
     private static final String HOST = "XVxYUVVKTFhV=9";
@@ -76,21 +74,6 @@ public class Controller extends WindowAdapter implements ChangeListener, ActionL
     private SettingsDialog settingsDialog;
     private AboutDialog aboutDialog;
     
-
-    @Override
-    public void stateChanged(ChangeEvent e) {
-        Object source = e.getSource();
-        
-        /* JSpinner */
-        if (source instanceof JSpinner) {
-            float ratio = mainWindow.getRatio() / 100.0F;
-            
-            if (ratio != 0F) {
-                articles.setRatio(ratio);
-                pref.put("ratio", encode(valueOf(ratio)));
-            }
-        }
-    }
     
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -206,7 +189,6 @@ public class Controller extends WindowAdapter implements ChangeListener, ActionL
         
         /* Establish connection with controller */
         mainWindow.setController((ActionListener) this);
-        mainWindow.setController((ChangeListener) this);
         mainWindow.addWindowListener(this);
         
         settingsDialog.setController(this);
@@ -338,7 +320,6 @@ public class Controller extends WindowAdapter implements ChangeListener, ActionL
                     /* Set connected */
                     System.out.println("Connected");
                     mainWindow.setConnected(true);
-                    mainWindow.setRatio(ratioVal * 100.0F);
                     consult();
                 
                 /* No connected */
