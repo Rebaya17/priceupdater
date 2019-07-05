@@ -46,7 +46,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ArticlesTable extends DefaultTableModel {
     private boolean columnStatus[];
     private final ArrayList<Integer> modified;
-    private float ratio;
     
     @Override
     public boolean isCellEditable(int row, int column) {
@@ -74,11 +73,7 @@ public class ArticlesTable extends DefaultTableModel {
      * Creates new table
      */
     public ArticlesTable() {
-        ratio = 0F;
         modified = new ArrayList<>();
-        
-        //columnStatus = new boolean[] {false, false, false, true};
-        //super.setColumnIdentifiers(new String[]{"Código", "Descripción", "Costo", "Precio"});
 
         columnStatus = new boolean[] {false, false, true};
         super.setColumnIdentifiers(new String[]{"Código", "Descripción", "Precio"});
@@ -101,13 +96,11 @@ public class ArticlesTable extends DefaultTableModel {
             
             if (row == null || row.getCell(0) == null) return;
             
-            String cod = String.format("%-14s", row.getCell(0).getStringCellValue()).replace(' ', '0');
+            String cod = row.getCell(0).getStringCellValue();
             String des = row.getCell(1).getStringCellValue();
-            float vta = (float) row.getCell(2).getNumericCellValue();
-            //float cos = vta / (1 + ratio);
+            float monto = (float) row.getCell(2).getNumericCellValue();
             
-            //addRow(new String[]{cod, des, String.valueOf(cos), String.valueOf(vta)});
-            addRow(new String[]{cod, des, String.valueOf(vta)});
+            addRow(new Object[]{cod, des, monto});
             modified.add(j);
         }
     }
@@ -123,23 +116,12 @@ public class ArticlesTable extends DefaultTableModel {
      * Remove all rows
      */
     public void clear() {
-        while (getRowCount() > 0)
-            removeRow(0);
-        
+        super.setRowCount(0);
         modified.clear();
     }
     
     
     /* Getters */
-    
-    /**
-     * Get the current ratio
-     * 
-     * @return Current ratio
-     */
-    public float getRatio() {
-        return ratio;
-    }
     
     /**
      * Get column enabled status
@@ -166,15 +148,6 @@ public class ArticlesTable extends DefaultTableModel {
     
     
     /* Setters */
-    
-    /**
-     * Set the a new ratio
-     * 
-     * @param rat New ratio
-     */
-    public void setRatio(float rat) {
-        ratio = rat;
-    }
     
     /**
      * Set column enabled status

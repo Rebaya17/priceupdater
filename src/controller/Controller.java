@@ -36,7 +36,6 @@ import static java.lang.Float.parseFloat;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -315,7 +314,6 @@ public class Controller extends WindowAdapter implements ActionListener {
                     float ratioVal;
                     String ratio = decode(pref.get("ratio", RATIO));
                     try {ratioVal = parseFloat(ratio);} catch (NumberFormatException ex) {ratioVal = parseFloat(decode(RATIO));}
-                    articles.setRatio(ratioVal);
                     
                     /* Set connected */
                     System.out.println("Connected");
@@ -379,8 +377,8 @@ public class Controller extends WindowAdapter implements ActionListener {
         
         /* Build query */
         String query = "SELECT DISTINCT"
-                + " RTRIM(articulo.co_art) AS cod,"
-                + " RTRIM(articulo.art_des),"
+                + " RTRIM(articulo.co_art),"
+                + " RTRIM(articulo.art_des) AS des,"
                 + " precio.monto"
                 + " FROM dbo.saArticulo articulo"
                 + " INNER JOIN dbo.saArtPrecio precio"
@@ -395,7 +393,7 @@ public class Controller extends WindowAdapter implements ActionListener {
         else if (!cod.isEmpty() && !des.isEmpty())
             query += " WHERE " + cod + " AND " + des;
         
-        query += " ORDER BY cod";
+        query += " ORDER BY des";
         
         /* Consult to database and set articles*/
         try {
@@ -458,9 +456,10 @@ public class Controller extends WindowAdapter implements ActionListener {
             for (int i = 0; i < modified.length; i++) {
                 int row = modified[i];
                 String co_art = articles.getValueAt(row, 0).toString();
+                String monto = articles.getValueAt(row, 2).toString();
                 
                 String statement = "UPDATE dbo.saArtPrecio"
-                        + " SET monto = " + articles.getValueAt(row, 2).toString() + ","
+                        + " SET monto = " + monto + ","
                         + " desde = GETDATE()"
                         + " WHERE co_art = '" + co_art + "'"
                         + " AND desde = (SELECT MAX(desde) FROM dbo.saArtPrecio WHERE co_art = '" + co_art + "')";
