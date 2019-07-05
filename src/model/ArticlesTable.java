@@ -46,7 +46,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class ArticlesTable extends DefaultTableModel {
     private boolean columnStatus[];
-    private ArrayList<Integer> modified;
+    private final ArrayList<Integer> modified;
     private float ratio;
     
     @Override
@@ -63,14 +63,13 @@ public class ArticlesTable extends DefaultTableModel {
         }
         
         /* Price column */
-        float newVal = parseFloat(newValue.toString());
         float oldVal = parseFloat(getValueAt(row, column).toString());
-        
         try {
+            float newVal = parseFloat(newValue.toString());
             if (newVal < 0) throw new NumberFormatException("Error: Negative number are not allowed");
             
-            super.setValueAt(newVal, row, column);
-            super.setValueAt(newVal / (1 + ratio), row, column - 1);
+            super.setValueAt(newVal, row, 3);
+            super.setValueAt(newVal / (1 + ratio), row, 2);
             
             addModified(row);
         } catch (NumberFormatException ex) {
@@ -107,12 +106,12 @@ public class ArticlesTable extends DefaultTableModel {
             
             if (row == null || row.getCell(0) == null) return;
             
-            String cod = String.format("%-14s", row.getCell(0).getStringCellValue()).replace(' ', '0');
+            String cod = row.getCell(0).getStringCellValue();
             String des = row.getCell(1).getStringCellValue();
-            float vta = (float) row.getCell(2).getNumericCellValue();
-            float cos = vta / (1 + ratio);
+            float monto = (float) row.getCell(2).getNumericCellValue();
+            float costo = monto / (1 + ratio);
             
-            addRow(new String[]{cod, des, String.valueOf(cos), String.valueOf(vta)});
+            addRow(new Object[]{cod, des, costo, monto});
             modified.add(j);
         }
     }
