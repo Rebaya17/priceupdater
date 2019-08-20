@@ -39,7 +39,10 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import model.DBManager;
 import model.ArticlesTable;
 import static model.Kryptos.decode;
@@ -54,7 +57,7 @@ import view.SettingsDialog;
 /**
  * Controller class 
  */
-public class Controller extends WindowAdapter implements ActionListener {
+public class Controller extends WindowAdapter implements ActionListener, ChangeListener {
     private static final String KEY = "eIR2doSBcXJ3dnSCdoR1dIaBd3WBdHl3hoN2g3NyhXN5cHdxcnJ4goJzcHiGhXF2dHVwhXJxgoVwdnhwcXJ0cw===64";
     
     private static final String HOST = "XVxYUVVKTFhV=9";
@@ -124,6 +127,15 @@ public class Controller extends WindowAdapter implements ActionListener {
     }
     
     @Override
+    public void stateChanged(ChangeEvent e) {
+        Object source = e.getSource();
+
+        /* Batch check box */
+        if (source instanceof JCheckBox)
+            mainWindow.updateBatchValueStatus();
+    }
+    
+    @Override
     public void windowClosing(WindowEvent e) {
         Object source = e.getSource();
         
@@ -187,7 +199,7 @@ public class Controller extends WindowAdapter implements ActionListener {
         if (aboutDialog == null) return false;
         
         /* Establish connection with controller */
-        mainWindow.setController((ActionListener) this);
+        mainWindow.setController(this);
         mainWindow.addWindowListener(this);
         
         settingsDialog.setController(this);
@@ -310,11 +322,6 @@ public class Controller extends WindowAdapter implements ActionListener {
                 
                 /* Validate connection */
                 if (dbManager.isConnected()) {
-                    /* Load ratio value */
-                    float ratioVal;
-                    String ratio = decode(pref.get("ratio", RATIO));
-                    try {ratioVal = parseFloat(ratio);} catch (NumberFormatException ex) {ratioVal = parseFloat(decode(RATIO));}
-                    
                     /* Set connected */
                     System.out.println("Connected");
                     mainWindow.setConnected(true);
@@ -450,6 +457,7 @@ public class Controller extends WindowAdapter implements ActionListener {
      */
     public void update() {
         int[] modified = articles.getModified();
+        int batch = mainWindow.getBatch();
         
         /* Update modified rows */
         try {
@@ -458,6 +466,7 @@ public class Controller extends WindowAdapter implements ActionListener {
                 String co_art = articles.getValueAt(row, 0).toString();
                 String monto = articles.getValueAt(row, 2).toString();
                 
+                /* Update articles */
                 String statement = "UPDATE dbo.saArtPrecio"
                         + " SET monto = " + monto + ","
                         + " desde = GETDATE()"
@@ -465,6 +474,16 @@ public class Controller extends WindowAdapter implements ActionListener {
                         + " AND desde = (SELECT MAX(desde) FROM dbo.saArtPrecio WHERE co_art = '" + co_art + "')";
                 
                 dbManager.executeStatement(statement);
+                
+                /* Update batchs */
+                if (batch != 0) {
+                    statement = "UPDATE dbo.saLoteEntrada"
+                            + " SET precio = " + monto
+                            + " WHERE co_art = '" + co_art + "'"
+                            + " AND reng_num = " + batch;
+
+                    dbManager.executeStatement(statement);
+                }
             }
             
         /* Error */

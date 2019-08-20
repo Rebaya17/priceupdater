@@ -27,11 +27,11 @@
 
 package view;
 
+import controller.Controller;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.logging.Level;
@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -47,9 +48,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
@@ -94,6 +97,8 @@ public class MainWindow extends JFrame {
         desValue = new JTextField();
         consultButton = new JButton();
         updateButton = new JButton();
+        batchCheck = new JCheckBox();
+        batchValue = new JSpinner();
         scrollPane = new JScrollPane();
         table = new JTable();
         rowCount = new JLabel();
@@ -187,6 +192,27 @@ public class MainWindow extends JFrame {
         gridBagConstraints.insets = new Insets(0, 5, 5, 5);
         queryPanel.add(updateButton, gridBagConstraints);
 
+        batchCheck.setText("Actualizar lote:");
+        batchCheck.setName("batchCheck"); // NOI18N
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new Insets(0, 5, 0, 0);
+        queryPanel.add(batchCheck, gridBagConstraints);
+
+        batchValue.setModel(new SpinnerNumberModel(1, 1, 10, 1));
+        batchValue.setEnabled(batchCheck.isSelected());
+        batchValue.setName("batchValue"); // NOI18N
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new Insets(2, 5, 0, 5);
+        queryPanel.add(batchValue, gridBagConstraints);
+
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -254,7 +280,7 @@ public class MainWindow extends JFrame {
         separator2.setName("separator2"); // NOI18N
         fileMenu.add(separator2);
 
-        exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_MASK));
+        exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK));
         exitItem.setMnemonic('S');
         exitItem.setText("Salir");
         exitItem.setName("exitItem"); // NOI18N
@@ -315,6 +341,15 @@ public class MainWindow extends JFrame {
     /* Getters */
     
     /**
+     * Get batch selected status
+     * 
+     * @return Batch selected status
+     */
+    public boolean isBatchSelected() {
+        return batchCheck.isSelected();
+    }
+    
+    /**
      * Get code filter
      * 
      * @return Code filter
@@ -332,6 +367,16 @@ public class MainWindow extends JFrame {
         return desValue.getText();
     }
     
+    /**
+     * Get number of batch
+     * 
+     * @return Number of batch, 0 if is not batch selected
+     */
+    public int getBatch() {
+        int value = (Integer)batchValue.getValue();
+        return batchCheck.isSelected() ? value : 0;
+    }
+    
     /* Setters */
     
     /**
@@ -345,7 +390,7 @@ public class MainWindow extends JFrame {
         
         /* Query panel */
         for (Component component : queryPanel.getComponents())
-            component.setEnabled(status);
+            component.setEnabled(component instanceof JSpinner ? batchCheck.isSelected() && status : status);
         
         /* Menus */
         importItem.setEnabled(status);
@@ -373,6 +418,13 @@ public class MainWindow extends JFrame {
     }
     
     /**
+     * Enables or disales the batch value
+     */
+    public void updateBatchValueStatus() {
+        batchValue.setEnabled(batchCheck.isSelected());
+    }
+    
+    /**
      * Set table model with the data
      * 
      * @param tableModel Table model
@@ -389,7 +441,7 @@ public class MainWindow extends JFrame {
      * 
      * @param controller Controller object
      */
-    public void setController(ActionListener controller) {
+    public void setController(Controller controller) {
         /* Menu bar */
         /* File menu */
         fileMenu.addActionListener(controller);
@@ -412,6 +464,7 @@ public class MainWindow extends JFrame {
         /* Text fields */
         codValue.addActionListener(controller);
         desValue.addActionListener(controller);
+        batchValue.addChangeListener(controller);
         
         /* Buttons */
         consultButton.addActionListener(controller);
@@ -420,6 +473,8 @@ public class MainWindow extends JFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JMenuItem aboutItem;
+    private JCheckBox batchCheck;
+    private JSpinner batchValue;
     private JMenuItem clearFiltersItem;
     private JTextField codValue;
     private JMenuItem connectItem;
