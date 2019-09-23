@@ -32,7 +32,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import static java.lang.Float.parseFloat;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 import java.sql.SQLException;
@@ -65,7 +64,6 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
     private static final String INSTANCE = "XV1PXFpiT1ZbXQ===10";
     private static final String DATABASE = "TVtJSklcSUw==8";
     private static final String USER = "VklXWQ===4";
-    private static final String RATIO = "OjY4MzU==5";
     
     private static Preferences pref;
     
@@ -479,8 +477,7 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
                 if (batch != 0) {
                     statement = "UPDATE dbo.saLoteEntrada"
                             + " SET precio = " + monto
-                            + " WHERE co_art = '" + co_art + "'"
-                            + " AND reng_num = " + batch;
+                            + " WHERE co_art = '" + co_art;
 
                     dbManager.executeStatement(statement);
                 }
