@@ -436,14 +436,14 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
             }
         }
 
-        String cod = "articulo.co_art LIKE '%" + mainWindow.getCod() + "%'";
-        String des = "articulo.art_des LIKE '%" + mainWindow.getDes() + "%'";
+        String cod = "[cod] LIKE '%" + mainWindow.getCod() + "%'";
+        String des = "[des] LIKE '%" + mainWindow.getDes() + "%'";
 
         /* Build query */
         String query =
                 "SELECT DISTINCT" +
-                "  RTRIM([articulo].[co_art])," +
-                "  RTRIM([articulo].[art_des])," +
+                "  RTRIM([articulo].[co_art]) AS [cod]," +
+                "  RTRIM([articulo].[art_des]) AS [des]," +
                 "  CASE" +
                 "    WHEN [articulo].[prec_om] = 1 THEN [precio].[precioOm]" +
                 "    ELSE [precio].[monto]" +
