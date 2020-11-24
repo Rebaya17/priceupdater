@@ -1,11 +1,11 @@
 /*
  * This is free and unencumbered software released into the public domain.
- * 
+ *
  * Anyone is free to copy, modify, publish, use, compile, sell, or
  * distribute this software, either in source code form or as a compiled
  * binary, for any purpose, commercial or non-commercial, and by any
  * means.
- * 
+ *
  * In jurisdictions that recognize copyright laws, the author or authors
  * of this software dedicate any and all copyright interest in the
  * software to the public domain. We make this dedication for the benefit
@@ -13,7 +13,7 @@
  * successors. We intend this dedication to be an overt act of
  * relinquishment in perpetuity of all present and future rights to this
  * software under copyright law.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -21,7 +21,7 @@
  * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * For more information, please refer to <http://unlicense.org/>
  */
 
@@ -29,12 +29,35 @@ package view;
 
 import controller.Controller;
 import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
+import javax.swing.border.BevelBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -42,6 +65,8 @@ import javax.swing.table.TableModel;
  * MainWindow class
  */
 public class MainWindow extends JFrame {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Creates new form MainWindow
@@ -55,7 +80,7 @@ public class MainWindow extends JFrame {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        
+
         initComponents();
     }
 
@@ -67,88 +92,91 @@ public class MainWindow extends JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
+        GridBagConstraints gridBagConstraints;
 
-        batchValue = new javax.swing.JSpinner();
-        queryPanel = new javax.swing.JPanel();
-        javax.swing.JLabel codLabel = new javax.swing.JLabel();
-        codValue = new javax.swing.JTextField();
-        javax.swing.JLabel desLabel = new javax.swing.JLabel();
-        desValue = new javax.swing.JTextField();
-        consultButton = new javax.swing.JButton();
-        updateButton = new javax.swing.JButton();
-        batchCheck = new javax.swing.JCheckBox();
-        scrollPane = new javax.swing.JScrollPane();
-        table = new javax.swing.JTable();
-        rowCount = new javax.swing.JLabel();
-        menuBar = new javax.swing.JMenuBar();
-        fileMenu = new javax.swing.JMenu();
-        importItem = new javax.swing.JMenuItem();
-        javax.swing.JPopupMenu.Separator separator1 = new javax.swing.JPopupMenu.Separator();
-        clearFiltersItem = new javax.swing.JMenuItem();
-        consultItem = new javax.swing.JMenuItem();
-        javax.swing.JPopupMenu.Separator separator2 = new javax.swing.JPopupMenu.Separator();
-        exitItem = new javax.swing.JMenuItem();
-        connectionMenu = new javax.swing.JMenu();
-        connectItem = new javax.swing.JMenuItem();
-        disconnectItem = new javax.swing.JMenuItem();
-        helpMenu = new javax.swing.JMenu();
-        aboutItem = new javax.swing.JMenuItem();
+        batchValue = new JSpinner();
+        queryPanel = new JPanel();
+        JLabel codLabel = new JLabel();
+        codValue = new JTextField();
+        JLabel desLabel = new JLabel();
+        desValue = new JTextField();
+        consultButton = new JButton();
+        updateButton = new JButton();
+        batchCheck = new JCheckBox();
+        JTabbedPane tables = new JTabbedPane();
+        JScrollPane articlesScrollPane = new JScrollPane();
+        articlesTable = new JTable();
+        JScrollPane ratesScrollPane = new JScrollPane();
+        ratesTable = new JTable();
+        rowCount = new JLabel();
+        menuBar = new JMenuBar();
+        fileMenu = new JMenu();
+        importItem = new JMenuItem();
+        JPopupMenu.Separator separator1 = new JPopupMenu.Separator();
+        clearFiltersItem = new JMenuItem();
+        consultItem = new JMenuItem();
+        JPopupMenu.Separator separator2 = new JPopupMenu.Separator();
+        exitItem = new JMenuItem();
+        connectionMenu = new JMenu();
+        connectItem = new JMenuItem();
+        disconnectItem = new JMenuItem();
+        helpMenu = new JMenu();
+        aboutItem = new JMenuItem();
 
-        batchValue.setModel(new javax.swing.SpinnerNumberModel(1, 1, 10, 1));
+        batchValue.setModel(new SpinnerNumberModel(1, 1, 10, 1));
         batchValue.setEnabled(batchCheck.isSelected());
         batchValue.setName("batchValue"); // NOI18N
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("Actualizador de Precios");
         setIconImage(new ImageIcon(getClass().getResource("/resources/icon32.png")).getImage());
         setName("mainWindow"); // NOI18N
-        getContentPane().setLayout(new java.awt.GridBagLayout());
+        getContentPane().setLayout(new GridBagLayout());
 
-        queryPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Filtros y opciones"));
+        queryPanel.setBorder(BorderFactory.createTitledBorder("Filtros y opciones"));
         queryPanel.setName("queryPanel"); // NOI18N
-        queryPanel.setLayout(new java.awt.GridBagLayout());
+        queryPanel.setLayout(new GridBagLayout());
 
         codLabel.setText("Código:");
         codLabel.setName("codLabel"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new Insets(0, 5, 0, 0);
         queryPanel.add(codLabel, gridBagConstraints);
 
         codValue.setToolTipText("Filtrar por código");
         codValue.setName("codValue"); // NOI18N
         codValue.setActionCommand(codValue.getName());
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.1;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
+        gridBagConstraints.insets = new Insets(0, 5, 0, 5);
         queryPanel.add(codValue, gridBagConstraints);
 
         desLabel.setText("Descripción:");
         desLabel.setName("desLabel"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        gridBagConstraints.anchor = GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new Insets(0, 5, 0, 0);
         queryPanel.add(desLabel, gridBagConstraints);
 
         desValue.setToolTipText("Filtrar por descripción");
         desValue.setName("desValue"); // NOI18N
         desValue.setActionCommand(desValue.getName());
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(2, 5, 0, 5);
+        gridBagConstraints.insets = new Insets(2, 5, 0, 5);
         queryPanel.add(desValue, gridBagConstraints);
 
         consultButton.setMnemonic('O');
@@ -156,11 +184,11 @@ public class MainWindow extends JFrame {
         consultButton.setToolTipText("Consulta con los criterios indicados");
         consultButton.setName("consultButton"); // NOI18N
         consultButton.setActionCommand(consultButton.getName());
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 2, 5);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new Insets(0, 5, 2, 5);
         queryPanel.add(consultButton, gridBagConstraints);
 
         updateButton.setMnemonic('P');
@@ -168,35 +196,37 @@ public class MainWindow extends JFrame {
         updateButton.setToolTipText("Aplicar cambios en la base de datos");
         updateButton.setName("updateButton"); // NOI18N
         updateButton.setActionCommand(updateButton.getName());
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(0, 5, 2, 5);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new Insets(0, 5, 2, 5);
         queryPanel.add(updateButton, gridBagConstraints);
 
         batchCheck.setText("Actualizar lotes");
-        batchCheck.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        batchCheck.setHorizontalTextPosition(SwingConstants.LEFT);
         batchCheck.setName("batchCheck"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 5);
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.anchor = GridBagConstraints.LINE_END;
+        gridBagConstraints.insets = new Insets(0, 5, 2, 5);
         queryPanel.add(batchCheck, gridBagConstraints);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         getContentPane().add(queryPanel, gridBagConstraints);
 
-        scrollPane.setBorder(null);
-        scrollPane.setName("scrollPane"); // NOI18N
+        tables.setName("tables"); // NOI18N
 
-        table.setModel(new javax.swing.table.DefaultTableModel(
+        articlesScrollPane.setBorder(null);
+        articlesScrollPane.setName("articlesScrollPane"); // NOI18N
+
+        articlesTable.setModel(new DefaultTableModel(
             new Object [][] {
 
             },
@@ -204,23 +234,40 @@ public class MainWindow extends JFrame {
 
             }
         ));
-        table.setName("table"); // NOI18N
-        scrollPane.setViewportView(table);
+        articlesTable.setName("articlesTable"); // NOI18N
+        articlesScrollPane.setViewportView(articlesTable);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        tables.addTab("Artículos", articlesScrollPane);
+
+        ratesScrollPane.setBorder(null);
+        ratesScrollPane.setName("ratesScrollPane"); // NOI18N
+
+        ratesTable.setModel(new DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        ratesTable.setName("ratesTable"); // NOI18N
+        ratesScrollPane.setViewportView(ratesTable);
+
+        tables.addTab("Monedas", ratesScrollPane);
+
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
         gridBagConstraints.weighty = 1.0;
-        getContentPane().add(scrollPane, gridBagConstraints);
+        getContentPane().add(tables, gridBagConstraints);
 
-        rowCount.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        rowCount.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
         rowCount.setName("rowCount"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         getContentPane().add(rowCount, gridBagConstraints);
 
@@ -231,20 +278,20 @@ public class MainWindow extends JFrame {
         fileMenu.setToolTipText("");
         fileMenu.setName("fileMenu"); // NOI18N
 
-        importItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
+        importItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK));
         importItem.setText("Importar ...");
         importItem.setName("importItem"); // NOI18N
         importItem.setActionCommand(importItem.getName());
         fileMenu.add(importItem);
         fileMenu.add(separator1);
 
-        clearFiltersItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0));
+        clearFiltersItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
         clearFiltersItem.setText("Limpiar filtros");
         clearFiltersItem.setName("clearFiltersItem"); // NOI18N
         clearFiltersItem.setActionCommand(clearFiltersItem.getName());
         fileMenu.add(clearFiltersItem);
 
-        consultItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0));
+        consultItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
         consultItem.setText("Consultar");
         consultItem.setName("consultItem"); // NOI18N
         consultItem.setActionCommand(consultItem.getName());
@@ -253,7 +300,7 @@ public class MainWindow extends JFrame {
         separator2.setName("separator2"); // NOI18N
         fileMenu.add(separator2);
 
-        exitItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
+        exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK));
         exitItem.setMnemonic('S');
         exitItem.setText("Salir");
         exitItem.setName("exitItem"); // NOI18N
@@ -266,13 +313,13 @@ public class MainWindow extends JFrame {
         connectionMenu.setText("Conexión");
         connectionMenu.setName("connectionMenu"); // NOI18N
 
-        connectItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F11, 0));
+        connectItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0));
         connectItem.setMnemonic('C');
         connectItem.setName("connectItem"); // NOI18N
         connectItem.setActionCommand(connectItem.getName());
         connectionMenu.add(connectItem);
 
-        disconnectItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F12, 0));
+        disconnectItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0));
         disconnectItem.setMnemonic('D');
         disconnectItem.setText("Desconectar");
         disconnectItem.setName("disconnectItem"); // NOI18N
@@ -285,7 +332,7 @@ public class MainWindow extends JFrame {
         helpMenu.setText("Ayuda");
         helpMenu.setName("helpMenu"); // NOI18N
 
-        aboutItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
+        aboutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
         aboutItem.setText("Acerca de ...");
         aboutItem.setName("aboutItem"); // NOI18N
         aboutItem.setActionCommand(aboutItem.getName());
@@ -305,83 +352,84 @@ public class MainWindow extends JFrame {
     public void clearFilters() {
         codValue.setText("");
         desValue.setText("");
-        
+
         codValue.repaint();
         desValue.repaint();
     }
-    
-    
+
+
     /* Getters */
-    
+
     /**
      * Get batch selected status
-     * 
+     *
      * @return Batch selected status
      */
     public boolean isBatchSelected() {
         return batchCheck.isSelected();
     }
-    
+
     /**
      * Get code filter
-     * 
+     *
      * @return Code filter
      */
     public String getCod() {
         return codValue.getText();
     }
-    
+
     /**
      * Get description filter
-     * 
+     *
      * @return Description filter
      */
     public String getDes() {
         return desValue.getText();
     }
-    
+
     /**
      * Get number of batch
-     * 
+     *
      * @return Number of batch, 0 if is not batch selected
      */
     public int getBatch() {
-        int value = (Integer)batchValue.getValue();
+        int value = (Integer) batchValue.getValue();
         return batchCheck.isSelected() ? value : 0;
     }
-    
+
     /* Setters */
-    
+
     /**
      * Set connected status and enable and disable some components
-     * 
+     *
      * @param status Connected status
      */
     public void setConnected(boolean status) {
         /* Clear filter fields */
         clearFilters();
-        
+
         /* Query panel */
         for (Component component : queryPanel.getComponents())
-            component.setEnabled(component instanceof JSpinner ? batchCheck.isSelected() && status : status);
-        
+            component.setEnabled(component.getName().equals("batchValue") ? batchCheck.isSelected() && status : status);
+
         /* Menus */
         importItem.setEnabled(status);
         clearFiltersItem.setEnabled(status);
         consultItem.setEnabled(status);
         connectItem.setText(status ? "Reconectar ..." : "Conectar ...");
         disconnectItem.setEnabled(status);
-        
-        /* Clear table if status is not connected */
+
+        /* Clear tables if status is not connected */
         if (!status) {
-            table.setModel(new DefaultTableModel());
+            articlesTable.setModel(new DefaultTableModel());
+            ratesTable.setModel(new DefaultTableModel());
             rowCount.setText(" No conectado ");
         }
     }
-    
+
     /**
      * Enables or disables the menus items
-     * 
+     *
      * @param status true to enable the items
      */
     public void setMenusEnabled(boolean status) {
@@ -389,29 +437,39 @@ public class MainWindow extends JFrame {
         connectionMenu.setEnabled(status);
         helpMenu.setEnabled(status);
     }
-    
+
     /**
      * Enables or disales the batch value
      */
     public void updateBatchValueStatus() {
         batchValue.setEnabled(batchCheck.isSelected());
     }
-    
+
     /**
-     * Set table model with the data
-     * 
-     * @param tableModel Table model
+     * Set table model with the articles data
+     *
+     * @param tableModel Articles table model
      */
-    public void setTable(TableModel tableModel) {
-        table.setModel(tableModel);
+    public void setArticlesTable(TableModel tableModel) {
+        articlesTable.setModel(tableModel);
         rowCount.setText(" Filas selectionadas: " + tableModel.getRowCount());
-        
-        table.repaint();
+
+        articlesTable.repaint();
     }
-    
+
+    /**
+     * Set table model with the rates date
+     *
+     * @param tableModel Rates table model
+     */
+    public void setRatesTable(TableModel tableModel) {
+        ratesTable.setModel(tableModel);
+        ratesTable.repaint();
+    }
+
     /**
      * Set controller object
-     * 
+     *
      * @param controller Controller object
      */
     public void setController(Controller controller) {
@@ -422,49 +480,49 @@ public class MainWindow extends JFrame {
         clearFiltersItem.addActionListener(controller);
         consultItem.addActionListener(controller);
         exitItem.addActionListener(controller);
-        
+
         /* Connection menu */
         connectionMenu.addActionListener(controller);
         connectItem.addActionListener(controller);
         disconnectItem.addActionListener(controller);
-        
+
         /* Help menu  */
         helpMenu.addActionListener(controller);
         aboutItem.addActionListener(controller);
-        
-        
+
+
         /* Query panel */
         /* Text fields */
         codValue.addActionListener(controller);
         desValue.addActionListener(controller);
         batchValue.addChangeListener(controller);
-        
+
         /* Buttons */
         consultButton.addActionListener(controller);
         updateButton.addActionListener(controller);
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem aboutItem;
-    private javax.swing.JCheckBox batchCheck;
-    private javax.swing.JSpinner batchValue;
-    private javax.swing.JMenuItem clearFiltersItem;
-    private javax.swing.JTextField codValue;
-    private javax.swing.JMenuItem connectItem;
-    private javax.swing.JMenu connectionMenu;
-    private javax.swing.JButton consultButton;
-    private javax.swing.JMenuItem consultItem;
-    private javax.swing.JTextField desValue;
-    private javax.swing.JMenuItem disconnectItem;
-    private javax.swing.JMenuItem exitItem;
-    private javax.swing.JMenu fileMenu;
-    private javax.swing.JMenu helpMenu;
-    private javax.swing.JMenuItem importItem;
-    private javax.swing.JMenuBar menuBar;
-    private javax.swing.JPanel queryPanel;
-    private javax.swing.JLabel rowCount;
-    private javax.swing.JScrollPane scrollPane;
-    private javax.swing.JTable table;
-    private javax.swing.JButton updateButton;
+    private JMenuItem aboutItem;
+    private JTable articlesTable;
+    private JCheckBox batchCheck;
+    private JSpinner batchValue;
+    private JMenuItem clearFiltersItem;
+    private JTextField codValue;
+    private JMenuItem connectItem;
+    private JMenu connectionMenu;
+    private JButton consultButton;
+    private JMenuItem consultItem;
+    private JTextField desValue;
+    private JMenuItem disconnectItem;
+    private JMenuItem exitItem;
+    private JMenu fileMenu;
+    private JMenu helpMenu;
+    private JMenuItem importItem;
+    private JMenuBar menuBar;
+    private JPanel queryPanel;
+    private JTable ratesTable;
+    private JLabel rowCount;
+    private JButton updateButton;
     // End of variables declaration//GEN-END:variables
 }

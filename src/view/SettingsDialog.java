@@ -1,11 +1,11 @@
 /*
  * This is free and unencumbered software released into the public domain.
- * 
+ *
  * Anyone is free to copy, modify, publish, use, compile, sell, or
  * distribute this software, either in source code form or as a compiled
  * binary, for any purpose, commercial or non-commercial, and by any
  * means.
- * 
+ *
  * In jurisdictions that recognize copyright laws, the author or authors
  * of this software dedicate any and all copyright interest in the
  * software to the public domain. We make this dedication for the benefit
@@ -13,7 +13,7 @@
  * successors. We intend this dedication to be an overt act of
  * relinquishment in perpetuity of all present and future rights to this
  * software under copyright law.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -21,7 +21,7 @@
  * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * For more information, please refer to <http://unlicense.org/>
  */
 
@@ -59,33 +59,34 @@ import javax.swing.WindowConstants;
 public class SettingsDialog extends JDialog {
     private static ImageIcon lockedIcon;
     private static ImageIcon unlockedIcon;
-    
+
     public static final int ACCEPTED = 0;
     public static final int CANCELLED = 1;
     public static final int BAD = 2;
-    
+    private static final long serialVersionUID = 1L;
+
     private int option;
     private int authStatus;
     private String key;
-    
+
 
     /**
      * Creates new form Settings
-     * 
+     *
      * @param parent Parent frame
      */
     public SettingsDialog(java.awt.Frame parent) {
         super(parent, true);
         initComponents();
-        
+
         /* Icons */
         lockedIcon = new ImageIcon(getClass().getResource("/resources/locked.png"));
         unlockedIcon = new ImageIcon(getClass().getResource("/resources/unlocked.png"));
-        
+
         /* Close the actions */
         setCloseAction(acceptSettingsButton, KeyEvent.VK_ENTER);
         setCloseAction(cancelSettingsButton, KeyEvent.VK_ESCAPE);
-        
+
         /* Default option */
         option = CANCELLED;
         authStatus = CANCELLED;
@@ -328,7 +329,7 @@ public class SettingsDialog extends JDialog {
 
     /**
      * Asign close action to key
-     * 
+     *
      * @param button Button to activate
      * @param key Key to active the button
      */
@@ -343,10 +344,10 @@ public class SettingsDialog extends JDialog {
             }
         });
     }
-    
+
     /**
      * Authenticate password
-     * 
+     *
      * @param str Checksum to authenticate
      */
     public void authenticate(String str) {
@@ -354,32 +355,32 @@ public class SettingsDialog extends JDialog {
             authStatus = CANCELLED;
             return;
         }
-        
+
         authStatus = key.equals(str) ? ACCEPTED : BAD;
     }
-    
+
     /**
      * Set focus to pass field
      */
     public void focusPass() {
         passValue.requestFocusInWindow();
     }
-    
+
     /**
      * Validate if any field is empty
-     * 
+     *
      * @return true if any field is empty
      */
     public boolean hasEmptyFields() {
         boolean empty = hasEmptyConnectionFields();
         empty |= passValue.getPassword().length == 0;
-        
+
        return empty;
     }
-    
+
     /**
      * Validate if any connection field is empty
-     * 
+     *
      * @return true if any field connection is empty
      */
     public boolean hasEmptyConnectionFields() {
@@ -387,200 +388,200 @@ public class SettingsDialog extends JDialog {
         empty |= instanceValue.getText().isEmpty();
         empty |= dbValue.getText().isEmpty();
         empty |= idValue.getText().isEmpty();
-        
+
        return empty;
     }
-    
+
     /**
      * Close the dialog and asign the option
-     * 
+     *
      * @param status ACCEPTED or CANCELLED
      */
     public void close(int status) {
         option = status;
-        
+
         if (status != BAD) {
             setVisible(false);
             dispose();
         }
     }
-    
-    
-    
+
+
+
     /* Getters */
-    
+
     /**
      * Return true if the connections fields are locked
-     * 
+     *
      * @return true if the connections fields are locked
      */
     public boolean isEditable() {
         return editSettingsButton.isSelected();
     }
-    
+
     /**
      * Status of the last time the dialogue was closed
-     * 
+     *
      * @return Status ACCEPTED or CANCELLED
      */
     public int getOption() {
         return option;
     }
-    
+
     /**
      * Get host address
-     * 
+     *
      * @return Host address
      */
     public String getHost() {
         return hostValue.getText();
     }
-    
+
     /**
      * Get port number
-     * 
+     *
      * @return Port number
      */
     public int getPort() {
         return (int) portValue.getValue();
     }
-    
+
     /**
      * Get instance
-     * 
+     *
      * @return Instance
      */
     public String getInstance() {
         return instanceValue.getText();
     }
-    
+
     /**
      * Get data base name
-     * 
+     *
      * @return Data base name
      */
     public String getDB() {
         return dbValue.getText();
     }
-    
+
     /**
      * Get user ID
-     * 
+     *
      * @return User ID
      */
     public String getID() {
         return idValue.getText();
     }
-    
+
     /**
      * Get user password
-     * 
+     *
      * @return User password
      */
     public String getPass() {
         char[] array = passValue.getPassword();
         String pass = new String(array);
         Arrays.fill(array, '\0');
-        
+
         return pass;
     }
-    
+
     /**
      * Get the authentication status
-     * 
+     *
      * @return Authentication status
      */
     public int getAuthStatus() {
         return authStatus;
     }
-    
+
     /* Setters */
-    
+
     /**
      * Lock or unlock settings fields
-     * 
+     *
      * @param status true to set editable settings fields
      */
     public void setEditable(boolean status) {
         if (editSettingsButton.isSelected() != status)
             editSettingsButton.setSelected(status);
-        
+
         authStatus = CANCELLED;
         editSettingsButton.setIcon(status ? unlockedIcon : lockedIcon);
-        
+
         hostValue.setEnabled(status);
         portValue.setEnabled(status);
         instanceValue.setEnabled(status);
         dbValue.setEnabled(status);
         idValue.setEnabled(status);
     }
-    
+
     /**
      * Set host address
-     * 
+     *
      * @param host Host address
      */
     public void setHost(String host) {
         hostValue.setText(host);
     }
-    
+
     /**
      * Set port number
-     * 
+     *
      * @param port Port number
      */
     public void setPort(int port) {
         portValue.setValue(port);
     }
-    
+
     /**
      * Set instance name
-     * 
+     *
      * @param instance Instance name
      */
     public void setInstance(String instance) {
         instanceValue.setText(instance);
     }
-    
+
     /**
      * Set data base name
-     * 
+     *
      * @param database Data base name
      */
     public void setDB(String database) {
         dbValue.setText(database);
     }
-    
+
     /**
      * Set user ID
-     * 
+     *
      * @param user User ID
      */
     public void setID(String user) {
         idValue.setText(user);
     }
-    
+
     /**
      * Set user password
-     * 
+     *
      * @param pass User password
      */
     public void setPass(String pass) {
         passValue.setText(pass);
     }
-    
+
     /**
      * Set checksum hash
-     * 
+     *
      * @param str Checksum
      */
     public void setKey(String str) {
         key = str;
     }
-    
+
     /**
      * Set controller object
-     * 
+     *
      * @param controller Controller object
      */
     public void setController(ActionListener controller) {
@@ -589,8 +590,8 @@ public class SettingsDialog extends JDialog {
         acceptSettingsButton.addActionListener(controller);
         cancelSettingsButton.addActionListener(controller);
     }
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton acceptSettingsButton;
     private JButton cancelSettingsButton;

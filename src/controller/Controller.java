@@ -1,11 +1,11 @@
 /*
  * This is free and unencumbered software released into the public domain.
- * 
+ *
  * Anyone is free to copy, modify, publish, use, compile, sell, or
  * distribute this software, either in source code form or as a compiled
  * binary, for any purpose, commercial or non-commercial, and by any
  * means.
- * 
+ *
  * In jurisdictions that recognize copyright laws, the author or authors
  * of this software dedicate any and all copyright interest in the
  * software to the public domain. We make this dedication for the benefit
@@ -13,7 +13,7 @@
  * successors. We intend this dedication to be an overt act of
  * relinquishment in perpetuity of all present and future rights to this
  * software under copyright law.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -21,7 +21,7 @@
  * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * For more information, please refer to <http://unlicense.org/>
  */
 
@@ -38,12 +38,13 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import model.DBManager;
 import model.ArticlesTable;
+import model.DBManager;
+import model.RatesTable;
 import static model.Kryptos.decode;
 import static model.Kryptos.encode;
 import static model.Kryptos.sha256;
@@ -54,44 +55,45 @@ import view.PasswordDialog;
 import view.SettingsDialog;
 
 /**
- * Controller class 
+ * Controller class
  */
 public class Controller extends WindowAdapter implements ActionListener, ChangeListener {
     private static final String KEY = "eIR2doSBcXJ3dnSCdoR1dIaBd3WBdHl3hoN2g3NyhXN5cHdxcnJ4goJzcHiGhXF2dHVwhXJxgoVwdnhwcXJ0cw===64";
-    
+
     private static final String HOST = "XVxYUVVKTFhV=9";
     private static final String PORT = "Nzc4NQ===4";
     private static final String INSTANCE = "XV1PXFpiT1ZbXQ===10";
     private static final String DATABASE = "TVtJSklcSUw==8";
     private static final String USER = "VklXWQ===4";
-    
+
     private static Preferences pref;
-    
+
     private DBManager dbManager;
     private ArticlesTable articles;
+    private RatesTable rates;
     private MainWindow mainWindow;
     private FileChooser chooser;
     private SettingsDialog settingsDialog;
     private AboutDialog aboutDialog;
-    
-    
+
+
     @Override
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
         System.out.println("Command: " + command);
-        
+
         /* NULL command */
         if (command == null) {
             System.err.println("Error: empty command");
             return;
         }
-        
+
         /* Handle command */
         switch (command) {
             /* File menu */
             case "clearFiltersItem": mainWindow.clearFilters(); return;
             case "importItem": importFile(); return;
-            case "consultItem": consult(); return;
+            case "consultItem": consultArticles(); return;
             case "exitItem": exit(); return;
 
             /* Connection menu */
@@ -101,13 +103,13 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
             /* Help menu */
             case "aboutItem": about(); return;
 
-            
+
             /* Text fields*/
-            case "codValue": consult(); return;
-            case "desValue": consult(); return;
-            
+            case "codValue": consultArticles(); return;
+            case "desValue": consultArticles(); return;
+
             /* Buttons */
-            case "consultButton": consult(); return;
+            case "consultButton": consultArticles(); return;
             case "updateButton": update(); return;
 
 
@@ -121,45 +123,51 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
 
             /* Error */
             default: System.err.println("Error: can't find action \"" + command + "\"");
-        } 
+        }
     }
-    
+
     @Override
     public void stateChanged(ChangeEvent e) {
         Object source = e.getSource();
 
-        /* Batch check box */
-        if (source instanceof JCheckBox)
-            mainWindow.updateBatchValueStatus();
+        if (source instanceof JComponent) {
+            String name = ((JComponent) source).getName();
+
+            switch (name) {
+                /* Batch check box */
+                case "batchCheck": mainWindow.updateBatchValueStatus();
+            }
+        }
     }
-    
+
     @Override
     public void windowClosing(WindowEvent e) {
         Object source = e.getSource();
-        
+
         /* Close main window */
         if (source instanceof MainWindow)
             exit();
-        
+
         /* Close settingsDialog dialog */
         else if (source instanceof SettingsDialog)
             settingsDialog.close(SettingsDialog.CANCELLED);
     }
-    
+
     /**
      * Creates new Controller
      */
     public Controller() {
         pref = Preferences.userRoot().node("priceupdater");
-        
+
         dbManager = null;
         articles = null;
+        rates = null;
         mainWindow = null;
         chooser = null;
         settingsDialog = null;
         aboutDialog = null;
     }
-    
+
     /**
      * Restore stored settings into settings dialog
      */
@@ -170,9 +178,9 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
         String instance = decode(pref.get("instance", INSTANCE));
         String db = decode(pref.get("db", DATABASE));
         String id = decode(pref.get("id", USER));
-        
+
         try {portVal = parseInt(port);} catch (NumberFormatException ex) {portVal = parseInt(decode(PORT));}
-        
+
         settingsDialog.setHost(host);
         settingsDialog.setPort(portVal);
         settingsDialog.setInstance(instance);
@@ -180,7 +188,7 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
         settingsDialog.setID(id);
         settingsDialog.setPass("");
     }
-    
+
     /**
      * Initialize Model-View-Controller.
      *
@@ -191,35 +199,36 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
         /* Check MVC objects */
         if (dbManager == null) return false;
         if (articles == null) return false;
+        if (rates == null) return false;
         if (mainWindow == null) return false;
         if (chooser == null) return false;
         if (settingsDialog == null) return false;
         if (aboutDialog == null) return false;
-        
+
         /* Establish connection with controller */
         mainWindow.setController(this);
         mainWindow.addWindowListener(this);
-        
+
         settingsDialog.setController(this);
         settingsDialog.addWindowListener(this);
-        
+
         aboutDialog.setController(this);
-        
+
         /* Set icon and show main window */
         settingsDialog.setIconImage(mainWindow.getIconImage());
         aboutDialog.setIconImage(mainWindow.getIconImage());
         mainWindow.setVisible(true);
-        
+
         /* Set settings hash */
         settingsDialog.setKey(KEY);
-        
+
         /* First connection */
         mainWindow.setConnected(false);
         connect();
-        
+
         return true;
     }
-    
+
     /**
      * Edit the connection value settings
      */
@@ -227,7 +236,7 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
         /* Update status */
         boolean editable = settingsDialog.isEditable();
         settingsDialog.setEditable(settingsDialog.isEditable());
-        
+
         /* Validate empty fields */
         if (!editable && settingsDialog.hasEmptyConnectionFields()) {
             editable = true;
@@ -235,15 +244,15 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
             System.err.println("Error: Settings dialog can't have empty fields");
             JOptionPane.showMessageDialog(settingsDialog, "Error: No pueden haber campos vacíos.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        
+
         /* Finish if is unlocked */
         if (editable)
             return;
-        
-        
+
+
         /* Ask password */
         settingsDialog.authenticate(encode(sha256(PasswordDialog.showDialog(settingsDialog, "Ingrese la contraseña de Price Updater", "Seguridad"))));
-        
+
         switch (settingsDialog.getAuthStatus()) {
             case SettingsDialog.ACCEPTED:
                 pref.put("host", encode(settingsDialog.getHost()));
@@ -252,11 +261,11 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
                 pref.put("db", encode(settingsDialog.getDB()));
                 pref.put("id", encode(settingsDialog.getID()));
                 return;
-            
+
             case SettingsDialog.CANCELLED:
                 editable = false;
                 break;
-                
+
             case SettingsDialog.BAD:
                 editable = false;
                 System.err.println("Error: invalid password");
@@ -268,10 +277,10 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
 
         settingsDialog.setEditable(editable);
     }
-    
+
     /**
      * Close the settings dialog with the selected status
-     * 
+     *
      * @param status ACCEPTED or CANCELED
      */
     public void closeSettings(int status) {
@@ -280,26 +289,26 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
             JOptionPane.showMessageDialog(settingsDialog, "Error: No pueden haber campos vacíos.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         if (status == SettingsDialog.ACCEPTED && settingsDialog.isEditable()) {
             settingsDialog.setEditable(false);
             editConnection();
 
             status = settingsDialog.getAuthStatus();
-            
+
             if (status == SettingsDialog.CANCELLED) {
                 settingsDialog.close(SettingsDialog.BAD);
                 return;
             }
         }
-        
+
         /* Close settings dialog */
         settingsDialog.close(status);
-        
+
         if (status != SettingsDialog.ACCEPTED)
             restoreSettings();
     }
-    
+
     /**
      * Establish connect with database
      */
@@ -307,43 +316,44 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
         /* Set connection values and show settingsDialog dialog */
         restoreSettings();
         settingsDialog.setEditable(false);
-        
+
         settingsDialog.focusPass();
         settingsDialog.setVisible(true);
-        
+
         /* If accepted is pressed */
         if (settingsDialog.getOption() == SettingsDialog.ACCEPTED) {
             try {
                 /* Lock window and connect */
                 mainWindow.setMenusEnabled(false);
                 dbManager.connect(settingsDialog.getHost(), settingsDialog.getPort(), settingsDialog.getInstance(), settingsDialog.getDB(), settingsDialog.getID(), settingsDialog.getPass());
-                
+
                 /* Validate connection */
                 if (dbManager.isConnected()) {
                     /* Set connected */
                     System.out.println("Connected");
                     mainWindow.setConnected(true);
-                    consult();
-                
+                    consultCurrencies();
+                    consultArticles();
+
                 /* No connected */
                 } else {
                     throw new SQLException();
                 }
-            
+
             /* Exception */
             } catch (SQLException ex) {
                 mainWindow.setConnected(false);
                 System.err.println("Error: can't connect with database");
                 Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(mainWindow, ex.getMessage(), "Error: Los datos introducidos no son válidos", JOptionPane.ERROR_MESSAGE);
-            
+
             /* Unlock window */
             } finally {
                 mainWindow.setMenusEnabled(true);
             }
         }
     }
-    
+
     /**
      * Disconnect of database
      */
@@ -354,9 +364,9 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
                 case JOptionPane.YES_OPTION: update();
             }
         }
-        
+
         mainWindow.setConnected(false);
-        
+
         try {
             dbManager.disconnect();
         } catch (SQLException ex) {
@@ -365,54 +375,110 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
             JOptionPane.showMessageDialog(mainWindow, ex.getMessage(), "Error: No se pudo desconectar correctamente de la base de datos", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     /**
-     * Get articles from database
+     * Get currencies from database
      */
-    public void consult() {
-        if (articles.getModified().length != 0) {
-            switch (JOptionPane.showConfirmDialog(mainWindow, "¿Desea aplicar los cambios antes de hacer una nueva consulta?", "Guardar cambios", JOptionPane.YES_NO_CANCEL_OPTION)) {
-                case JOptionPane.CANCEL_OPTION: return;
-                case JOptionPane.YES_OPTION: update();
-            }
-        }
-        
-        String cod = "articulo.co_art LIKE '%" + mainWindow.getCod() + "%'";
-        String des = "articulo.art_des LIKE '%" + mainWindow.getDes() + "%'";
-        
-        /* Build query */
-        String query = "SELECT DISTINCT"
-                + " RTRIM(articulo.co_art),"
-                + " RTRIM(articulo.art_des) AS des,"
-                + " precio.monto"
-                + " FROM dbo.saArticulo articulo"
-                + " INNER JOIN dbo.saArtPrecio precio"
-                + " ON articulo.co_art = precio.co_art";
-        
-        if (!cod.isEmpty() && des.isEmpty())
-            query += " WHERE " + cod;
-        
-        else if (cod.isEmpty() && !des.isEmpty())
-            query += " WHERE " + des;
-        
-        else if (!cod.isEmpty() && !des.isEmpty())
-            query += " WHERE " + cod + " AND " + des;
-        
-        query += " ORDER BY des";
-        
-        /* Consult to database and set articles*/
+    public void consultCurrencies() {
+        String query =
+                "SELECT" +
+                "  [moneda].[co_mone]," +
+                "  [moneda].[mone_des]," +
+                "  CASE" +
+                "    WHEN [tasa].[tasa_v] IS NOT NULL THEN [tasa].[tasa_v]" +
+                "    ELSE 0" +
+                "  END " +
+                "FROM" +
+                "  [dbo].[saMoneda] AS [moneda] " +
+                "LEFT JOIN (" +
+                "  SELECT" +
+                "    [tasa].[co_mone]," +
+                "    [tasa].[tasa_v]" +
+                "  FROM" +
+                "    [dbo].[saTasa] AS [tasa]" +
+                "  INNER JOIN (" +
+                "    SELECT" +
+                "      [co_mone]," +
+                "      MAX([fecha]) AS [fecha]" +
+                "    FROM" +
+                "      [dbo].[saTasa]" +
+                "    GROUP BY" +
+                "      [co_mone]" +
+                "    ) AS [max]" +
+                "  ON" +
+                "    [tasa].[co_mone] = [max].[co_mone] AND" +
+                "    [tasa].[fecha] = [max].[fecha]" +
+                "  ) AS [tasa] " +
+                "ON" +
+                "  [moneda].[co_mone] = [tasa].[co_mone];";
+
         try {
-            articles.clear();
-            dbManager.executeQuery(query, articles);
-            
-            mainWindow.setTable(articles);
+            rates.clear();
+            dbManager.executeQuery(query, rates);
+
+            articles.setCurrencies(rates.getCurrencies());
+            mainWindow.setRatesTable(rates);
         } catch (SQLException ex) {
             System.err.println("Error: can't run the query or connecting with database");
             Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(mainWindow, ex.getMessage(), "Error realizando la consulta a la base de datos", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
+    /**
+     * Get articles from database
+     */
+    public void consultArticles() {
+        if (articles.getModified().length != 0) {
+            switch (JOptionPane.showConfirmDialog(mainWindow, "¿Desea aplicar los cambios antes de hacer una nueva consulta?", "Guardar cambios", JOptionPane.YES_NO_CANCEL_OPTION)) {
+                case JOptionPane.CANCEL_OPTION: return;
+                case JOptionPane.YES_OPTION: update();
+            }
+        }
+
+        String cod = "articulo.co_art LIKE '%" + mainWindow.getCod() + "%'";
+        String des = "articulo.art_des LIKE '%" + mainWindow.getDes() + "%'";
+
+        /* Build query */
+        String query =
+                "SELECT DISTINCT" +
+                "  RTRIM([articulo].[co_art])," +
+                "  RTRIM([articulo].[art_des])," +
+                "  CASE" +
+                "    WHEN [articulo].[prec_om] = 1 THEN [precio].[precioOm]" +
+                "    ELSE [precio].[monto]" +
+                "  END," +
+                "  [precio].[co_mone] " +
+                "FROM" +
+                "  [dbo].[saArticulo] AS [articulo] " +
+                "INNER JOIN [dbo].[saArtPrecio] AS [precio] " +
+                "ON" +
+                "  [articulo].[co_art] = [precio].[co_art]";
+
+        if (!mainWindow.getCod().isEmpty() && mainWindow.getDes().isEmpty())
+            query += " WHERE " + cod;
+
+        else if (mainWindow.getCod().isEmpty() && !mainWindow.getDes().isEmpty())
+            query += " WHERE " + des;
+
+        else if (!mainWindow.getCod().isEmpty() && !mainWindow.getDes().isEmpty())
+            query += " WHERE " + cod + " AND " + des;
+
+        query += " ORDER BY [des]";
+
+        /* Consult to database and set articles*/
+        try {
+            articles.clear();
+            dbManager.executeQuery(query, articles);
+
+            mainWindow.setArticlesTable(articles);
+        } catch (SQLException ex) {
+            System.err.println("Error: can't run the query or connecting with database");
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(mainWindow, ex.getMessage(), "Error realizando la consulta a la base de datos", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     /**
      * Get articles from excel file
      */
@@ -426,89 +492,115 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
                         case JOptionPane.YES_OPTION: update();
                     }
                 }
-                
+
                 try {
                     articles.clear();
                     articles.read(chooser.getSelectedFile().getAbsolutePath());
-            
-                    mainWindow.setTable(articles);
+
+                    mainWindow.setArticlesTable(articles);
                 } catch (IOException ex) {
                     Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
                     JOptionPane.showMessageDialog(mainWindow, ex.getMessage(), "Error importando hoja de cálculo", JOptionPane.ERROR_MESSAGE);
                 }
-                
+
                 return;
-            
+
             /* Import cancelled */
             case FileChooser.CANCEL_OPTION:
                 System.out.println("Canceled");
                 return;
-            
+
             /* Error */
             case FileChooser.ERROR_OPTION:
                 System.err.println("An error has occurred with the file chooser.");
         }
     }
-    
+
     /**
      * Update database
      */
     public void update() {
         int[] modified = articles.getModified();
         int batch = mainWindow.getBatch();
-        
+
         /* Update modified rows */
         try {
             for (int i = 0; i < modified.length; i++) {
                 int row = modified[i];
                 String co_art = articles.getValueAt(row, 0).toString();
                 String monto = articles.getValueAt(row, 2).toString();
-                
-                /* Update articles */
-                String statement = "UPDATE dbo.saArtPrecio"
-                        + " SET monto = " + monto + ","
-                        + " desde = GETDATE()"
-                        + " WHERE co_art = '" + co_art + "'"
-                        + " AND desde = (SELECT MAX(desde) FROM dbo.saArtPrecio WHERE co_art = '" + co_art + "')";
-                
+                String co_mone = articles.getValueAt(row, 3).toString();
+
+                /* Update article*/
+                String statement =
+                        "UPDATE [dbo].[saArticulo] SET " +
+                        "  [prec_om] = " + (co_mone.equals("BSS") ? "0" : "1");
+
                 dbManager.executeStatement(statement);
-                
+
+                /* Update article price*/
+                statement =
+                        "UPDATE [dbo].[saArtPrecio] SET ";
+
+                statement += co_mone.equals("BSS") ?
+                        "[monto] = " + monto + ", " +
+                        "[precioOm] = 0, " :
+                        "[monto] = 0, " +
+                        "[precioOm] = " + monto + ", ";
+
+                statement +=
+                        "  [desde] = GETDATE() " +
+                        "WHERE " +
+                        "  [co_art] = '" + co_art + "' AND " +
+                        "  [desde] = (" +
+                        "    SELECT" +
+                        "       MAX([desde])" +
+                        "     FROM" +
+                        "       [dbo].[saArtPrecio]" +
+                        "     WHERE" +
+                        "       [co_art] = '" + co_art +"'" +
+                        "  )";
+
+                dbManager.executeStatement(statement);
+
                 /* Update batchs */
                 if (batch != 0) {
-                    statement = "UPDATE dbo.saLoteEntrada"
-                            + " SET precio = " + monto
-                            + " WHERE co_art = '" + co_art;
+                    statement =
+                            "UPDATE [dbo].[saLoteEntrada] SET " +
+                            "  [precio] = " + monto + " " +
+                            "WHERE" +
+                            "  [co_art] = '" + co_art + "';";
 
                     dbManager.executeStatement(statement);
                 }
             }
-            
+
         /* Error */
         } catch (SQLException ex) {
             Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(mainWindow, ex.getMessage(), "Error aplicando actualizaciones", JOptionPane.ERROR_MESSAGE);
         }
-        
+
         /* Clear modified rows */
         articles.clearModified();
-        
+
         /* Show message dialog */
         JOptionPane.showMessageDialog(mainWindow, "Base de datos actualizada", "Finalizado", JOptionPane.INFORMATION_MESSAGE);
     }
-    
+
     /**
      * Show about dialog
      */
     public void about() {
         aboutDialog.setVisible(true);
     }
-    
+
     /**
      * Exit from application
      */
     public void exit() {
         disconnect();
-        
+
         try {
             if (!dbManager.isConnected())
                 mainWindow.dispose();
@@ -518,58 +610,67 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
             JOptionPane.showMessageDialog(mainWindow, ex.getMessage(), "Error: No se pudo desconectar correctamente de la base de datos", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    
+
+
     /* Setters */
-    
+
     /**
      * Set the data base dbManager
-     * 
+     *
      * @param model Data base dbManager
      */
     public void setManager(DBManager model) {
         dbManager = model;
     }
-    
+
     /**
      * Set the articles table model
-     * 
+     *
      * @param model Articles table model
      */
     public void setArticlesTable(ArticlesTable model) {
         articles = model;
     }
-    
+
+    /**
+     * Set the rates table model
+     *
+     * @param model Rates table model
+     */
+    public void setRatesTable(RatesTable model) {
+        rates = model;
+    }
+
     /**
      * Set the main window
-     * 
+     *
      * @param view Main window
      */
     public void setMainWindow(MainWindow view) {
         mainWindow = view;
     }
-    
+
     /**
      * Set the file chooser
-     * 
+     *
      * @param view File chooser
      */
     public void setFileChooser(FileChooser view) {
         chooser = view;
     }
-    
+
     /**
      * Set the settingsDialog dialog
-     * 
+     *
      * @param view Settings dialog
      */
     public void setSettings(SettingsDialog view) {
         settingsDialog = view;
     }
-    
+
     /**
      * Set the aboutDialog dialog
-     * 
+     *
      * @param view About dialog
      */
     public void setAbout(AboutDialog view) {
