@@ -436,8 +436,8 @@ public class Controller extends WindowAdapter implements ActionListener, ChangeL
             }
         }
 
-        String cod = "[cod] LIKE '%" + mainWindow.getCod() + "%'";
-        String des = "[des] LIKE '%" + mainWindow.getDes() + "%'";
+        String cod = "[articulo].[co_art] LIKE '%" + mainWindow.getCod() + "%'";
+        String des = "[articulo].[art_des] LIKE '%" + mainWindow.getDes() + "%'";
 
         /* Build query */
         String query =
